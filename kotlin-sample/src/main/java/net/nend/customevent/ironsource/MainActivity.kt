@@ -3,9 +3,6 @@ package net.nend.customevent.ironsource
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.ironsource.adapters.custom.nend.NendConfig
-import com.ironsource.adapters.custom.nend.NendCustomInterstitial
-import com.ironsource.adapters.custom.nend.NendCustomRewardedVideo
 import com.ironsource.mediationsdk.IronSource
 import com.ironsource.mediationsdk.impressionData.ImpressionData
 import com.ironsource.mediationsdk.impressionData.ImpressionDataListener
@@ -56,25 +53,7 @@ class MainActivity :
     private fun initIronSource(advertisingId: String?) {
         IronSource.setAdaptersDebug(true)
         IronSource.setRewardedVideoListener(this)
-        NendCustomRewardedVideo.nendAdUserFeature = NendConfig.UserFeature.Builder()
-            .setAge(20)
-            .setBirthday(2000, 1, 1)
-            .setGender(NendConfig.Gender.MALE)
-            .addCustomFeature("custom string value", "custom value")
-            .addCustomFeature("custom double value", 1)
-            .addCustomFeature("custom float value", 1.2)
-            .addCustomFeature("custom boolean value", true)
-            .build()
         IronSource.setInterstitialListener(this)
-        NendCustomInterstitial.nendAdUserFeature = NendConfig.UserFeature.Builder()
-            .setAge(20)
-            .setBirthday(2000, 1, 1)
-            .setGender(NendConfig.Gender.MALE)
-            .addCustomFeature("custom string value", "custom value")
-            .addCustomFeature("custom double value", 1)
-            .addCustomFeature("custom float value", 1.2)
-            .addCustomFeature("custom boolean value", true)
-            .build()
         IronSource.setUserId(advertisingId)
         IronSource.addImpressionDataListener(this)
         IronSource.init(this, APP_KEY) {
