@@ -14,8 +14,7 @@ dependencyResolutionManagement {
             url 'https://android-sdk.is.com/'
         }
         maven {
-            // FIXME: まだ開発テスト用のバージョンコードなのでリリース時に変更する
-            url 'https://fan-adn.github.io/nendSDK-Android-lib-test/library'
+            url 'https://fan-adn.github.io/nendSDK-Android-lib/library'
         }
     }
 }
