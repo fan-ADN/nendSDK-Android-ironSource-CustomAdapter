@@ -15,3 +15,9 @@ Sample of nendSDK ironSource custom event for Android.
 ## Usage
 
 Please check [Wiki](https://github.com/fan-ADN/nendSDK-Android-ironSource-CustomAdapter/wiki) for more information.
+
+## Link
+
+### For ironSource Unity Plugin
+
+If you also use ironSource Unity Plugin on Unity project, [Here](https://github.com/fan-ADN/nendSDK-ironSource-Unity-CustomAdapter-XML) is custom adapter XML for adding the nend Custom Adapter to the ironSource Unity plugin.
