@@ -4,18 +4,20 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.ironsource.mediationsdk.IronSource
+import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo
 import com.ironsource.mediationsdk.impressionData.ImpressionData
 import com.ironsource.mediationsdk.impressionData.ImpressionDataListener
 import com.ironsource.mediationsdk.logger.IronSourceError
 import com.ironsource.mediationsdk.model.Placement
-import com.ironsource.mediationsdk.sdk.InterstitialListener
-import com.ironsource.mediationsdk.sdk.RewardedVideoListener
+import com.ironsource.mediationsdk.sdk.LevelPlayInterstitialListener
+import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener
 import net.nend.customevent.ironsource.databinding.ActivityMainBinding
+import java.util.Locale
 
 class MainActivity :
     AppCompatActivity(),
-    RewardedVideoListener,
-    InterstitialListener,
+    LevelPlayRewardedVideoListener,
+    LevelPlayInterstitialListener,
     ImpressionDataListener {
     private lateinit var binding: ActivityMainBinding
 
@@ -52,8 +54,8 @@ class MainActivity :
 
     private fun initIronSource(advertisingId: String?) {
         IronSource.setAdaptersDebug(true)
-        IronSource.setRewardedVideoListener(this)
-        IronSource.setInterstitialListener(this)
+        IronSource.setLevelPlayInterstitialListener(this)
+        IronSource.setLevelPlayRewardedVideoListener(this)
         IronSource.setUserId(advertisingId)
         IronSource.addImpressionDataListener(this)
         IronSource.init(this, APP_KEY) {
@@ -61,69 +63,64 @@ class MainActivity :
         }
     }
 
-    override fun onRewardedVideoAdOpened() {
-        toast("onRewardedVideoAdOpened")
-    }
-
-    override fun onRewardedVideoAdClosed() {
-        toast("onRewardedVideoAdClosed")
-    }
-
-    override fun onRewardedVideoAvailabilityChanged(state: Boolean) {
-        toast("onRewardedVideoAvailabilityChanged: $state")
-    }
-
-    override fun onRewardedVideoAdStarted() {
-        toast("onRewardedVideoAdStarted")
-    }
-
-    override fun onRewardedVideoAdEnded() {
-        toast("onRewardedVideoAdEnded")
-    }
-
-    override fun onRewardedVideoAdRewarded(placement: Placement?) {
-        toast("onRewardedVideoAdRewarded: $placement")
-    }
-
-    override fun onRewardedVideoAdShowFailed(error: IronSourceError?) {
-        toast("onRewardedVideoAdShowFailed: $error")
-    }
-
-    override fun onRewardedVideoAdClicked(p0: Placement?) {
-        toast("onRewardedVideoAdClicked")
-    }
-
-    override fun onInterstitialAdReady() {
-        toast("onInterstitialAdReady")
-    }
-
-    override fun onInterstitialAdLoadFailed(error: IronSourceError?) {
-        toast("onInterstitialAdLoadFailed: $error")
-    }
-
-    override fun onInterstitialAdOpened() {
-        toast("onInterstitialAdOpened")
-    }
-
-    override fun onInterstitialAdClosed() {
-        toast("onInterstitialAdClosed")
-    }
-
-    override fun onInterstitialAdShowSucceeded() {
-        toast("onInterstitialAdShowSucceeded")
-    }
-
-    override fun onInterstitialAdShowFailed(error: IronSourceError?) {
-        toast("onInterstitialAdShowFailed: $error")
-    }
-
-    override fun onInterstitialAdClicked() {
-        toast("onInterstitialAdClicked")
-    }
-
     override fun onImpressionSuccess(impressionData: ImpressionData?) {
         impressionData?.let {
-            toast("onImpressionSuccess: $it")
+            toast("ImpressionSuccess: $it")
         }
+    }
+
+    //region LevelPlayListener common callbacks
+    override fun onAdOpened(adInfo: AdInfo) {
+        toast(capitalizeFirst(adInfo.adUnit) + "AdOpened")
+    }
+
+    override fun onAdShowSucceeded(adInfo: AdInfo) {
+        toast(capitalizeFirst(adInfo.adUnit) + "AdShowSucceeded")
+    }
+
+    override fun onAdClosed(adInfo: AdInfo) {
+        toast(capitalizeFirst(adInfo.adUnit) + "AdClosed")
+    }
+
+    override fun onAdShowFailed(ironSourceError: IronSourceError, adInfo: AdInfo) {
+        toast(capitalizeFirst(adInfo.adUnit) + "AdShowFailed:" + ironSourceError)
+    }
+    //endregion
+
+    //region LevelPlayInterstitialListener callbacks
+    override fun onAdReady(adInfo: AdInfo) {
+        toast("InterstitialAdReady")
+    }
+
+    override fun onAdClicked(adInfo: AdInfo) {
+        toast("InterstitialAdClicked")
+    }
+
+    override fun onAdLoadFailed(ironSourceError: IronSourceError) {
+        toast("InterstitialAdLoadFailed: $ironSourceError")
+    }
+    //endregion
+
+    //region LevelPlayRewardedVideoListener callbacks
+    override fun onAdAvailable(adInfo: AdInfo) {
+        toast("RewardedVideoAvailable")
+    }
+
+    override fun onAdUnavailable() {
+        toast("RewardedVideoUnavailable")
+    }
+
+    override fun onAdClicked(placement: Placement, adInfo: AdInfo) {
+        toast("RewardedVideoAdClicked")
+    }
+
+    override fun onAdRewarded(placement: Placement, adInfo: AdInfo) {
+        toast("RewardedVideoAdRewarded: $placement")
+    }
+    //endregion
+
+    private fun capitalizeFirst(str: String): String {
+        return if (str.isEmpty()) str
+        else str.substring(0, 1).uppercase(Locale.getDefault()) + str.substring(1)
     }
 }

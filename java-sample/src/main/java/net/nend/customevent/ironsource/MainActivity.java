@@ -7,14 +7,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ironsource.mediationsdk.IronSource;
+import com.ironsource.mediationsdk.adunit.adapter.utility.AdInfo;
 import com.ironsource.mediationsdk.impressionData.ImpressionData;
 import com.ironsource.mediationsdk.impressionData.ImpressionDataListener;
 import com.ironsource.mediationsdk.logger.IronSourceError;
 import com.ironsource.mediationsdk.model.Placement;
-import com.ironsource.mediationsdk.sdk.InterstitialListener;
-import com.ironsource.mediationsdk.sdk.RewardedVideoListener;
+import com.ironsource.mediationsdk.sdk.LevelPlayInterstitialListener;
+import com.ironsource.mediationsdk.sdk.LevelPlayRewardedVideoListener;
 
-public class MainActivity extends AppCompatActivity implements RewardedVideoListener, InterstitialListener, ImpressionDataListener {
+public class MainActivity extends AppCompatActivity implements LevelPlayRewardedVideoListener, LevelPlayInterstitialListener, ImpressionDataListener {
 
     private static final String APP_KEY = "YOUR_APP_KEY";
 
@@ -44,8 +45,8 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoList
 
     private void initIronSource(String advertisingId) {
         IronSource.setAdaptersDebug(true);
-        IronSource.setRewardedVideoListener(this);
-        IronSource.setInterstitialListener(this);
+        IronSource.setLevelPlayInterstitialListener(this);
+        IronSource.setLevelPlayRewardedVideoListener(this);
         IronSource.setUserId(advertisingId);
         IronSource.addImpressionDataListener(this);
         IronSource.init(this, APP_KEY, () -> toast("Initializing IronSource SDK is succeeded"));
@@ -56,85 +57,75 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoList
     }
 
     @Override
-    public void onRewardedVideoAdOpened() {
-        toast("onRewardedVideoAdOpened");
-    }
-
-    @Override
-    public void onRewardedVideoAdClosed() {
-        toast("onRewardedVideoAdClosed");
-    }
-
-    @Override
-    public void onRewardedVideoAvailabilityChanged(boolean state) {
-        toast("onRewardedVideoAvailabilityChanged: " + state);
-    }
-
-    @Override
-    public void onRewardedVideoAdStarted() {
-        toast("onRewardedVideoAdStarted");
-    }
-
-    @Override
-    public void onRewardedVideoAdEnded() {
-        toast("onRewardedVideoAdEnded");
-    }
-
-    @Override
-    public void onRewardedVideoAdRewarded(Placement placement) {
-        toast("onRewardedVideoAdRewarded: " + placement);
-    }
-
-    @Override
-    public void onRewardedVideoAdShowFailed(IronSourceError ironSourceError) {
-        toast("onRewardedVideoAdShowFailed: " + ironSourceError);
-    }
-
-    @Override
-    public void onRewardedVideoAdClicked(Placement placement) {
-        toast("onRewardedVideoAdClicked");
-    }
-
-    @Override
-    public void onInterstitialAdReady() {
-        toast("onInterstitialAdReady");
-    }
-
-    @Override
-    public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
-        toast("onInterstitialAdLoadFailed: " + ironSourceError);
-    }
-
-    @Override
-    public void onInterstitialAdOpened() {
-        toast("onInterstitialAdOpened");
-    }
-
-    @Override
-    public void onInterstitialAdClosed() {
-        toast("onInterstitialAdClosed");
-    }
-
-    @Override
-    public void onInterstitialAdShowSucceeded() {
-        toast("onInterstitialAdShowSucceeded");
-    }
-
-    @Override
-    public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
-        toast("onInterstitialAdShowFailed: " + ironSourceError);
-    }
-
-    @Override
-    public void onInterstitialAdClicked() {
-        toast("onInterstitialAdClicked");
-    }
-
-
-    @Override
     public void onImpressionSuccess(ImpressionData impressionData) {
         if (impressionData != null) {
-            toast("onImpressionSuccess: " + impressionData);
+            toast("ImpressionSuccess: " + impressionData);
         }
+    }
+
+    //region LevelPlayListener common callbacks
+    @Override
+    public void onAdOpened(AdInfo adInfo) {
+        toast(capitalizeFirst(adInfo.getAdUnit()) + "AdOpened");
+    }
+
+    @Override
+    public void onAdShowSucceeded(AdInfo adInfo) {
+        toast(capitalizeFirst(adInfo.getAdUnit()) + "AdShowSucceeded");
+    }
+
+    @Override
+    public void onAdClosed(AdInfo adInfo) {
+        toast(capitalizeFirst(adInfo.getAdUnit()) + "AdClosed");
+    }
+
+    @Override
+    public void onAdShowFailed(IronSourceError ironSourceError, AdInfo adInfo) {
+        toast(capitalizeFirst(adInfo.getAdUnit()) + "AdShowFailed:" + ironSourceError);
+    }
+    //endregion
+
+    //region LevelPlayInterstitialListener callbacks
+    @Override
+    public void onAdReady(AdInfo adInfo) {
+        toast("InterstitialAdReady");
+    }
+
+    @Override
+    public void onAdClicked(AdInfo adInfo) {
+        toast("InterstitialAdClicked");
+    }
+
+    @Override
+    public void onAdLoadFailed(IronSourceError ironSourceError) {
+        toast("InterstitialAdLoadFailed: " + ironSourceError);
+    }
+    //endregion
+
+    //region LevelPlayRewardedVideoListener callbacks
+    @Override
+    public void onAdAvailable(AdInfo adInfo) {
+        toast("RewardedVideoAvailable");
+    }
+
+    @Override
+    public void onAdUnavailable() {
+        toast("RewardedVideoUnavailable");
+    }
+
+    @Override
+    public void onAdClicked(Placement placement, AdInfo adInfo) {
+        toast("RewardedVideoAdClicked");
+    }
+
+    @Override
+    public void onAdRewarded(Placement placement, AdInfo adInfo) {
+        toast("RewardedVideoAdRewarded: " + placement);
+    }
+    //endregion
+
+    private String capitalizeFirst(String str) {
+        if (str.length() == 0) return str;
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

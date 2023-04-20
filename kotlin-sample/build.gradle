@@ -44,5 +44,5 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.gms:play-services-basement:18.1.0'
 
-    implementation 'net.nend.android:nend-custom-event-ironsource:9.0.0.3'
+    implementation 'net.nend.android:nend-custom-event-ironsource:9.0.1.0'
 }
